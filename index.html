@@ -67,20 +67,26 @@
 </div>
 <script>
     let vocabData = {}; let activeUnits = []; let pool = []; let idx = 0; let currentTask = null; let hasChecked = false;
+
     async function fetchUnits() {
         try {
             const response = await fetch('data/units.json');
             const list = await response.json();
             renderPills(list);
-        } catch (e) { document.getElementById('unit-pills').innerHTML = "Hiba az adatok elérésekor."; }
+        } catch (e) { console.error("Units betöltési hiba:", e); }
     }
+
     async function loadUnitData(name) {
         if (!vocabData[name]) {
-            const response = await fetch(`data/${name}.json`);
-            vocabData[name] = await response.json();
+            try {
+                // ITT VOLT A HIBA: backtick-et kell használni!
+                const response = await fetch(`data/${name}.json`);
+                vocabData[name] = await response.json();
+            } catch (e) { console.error(`Hiba a ${name}.json betöltésekor:`, e); }
         }
         refreshPool();
     }
+
     function renderPills(list) {
         const cont = document.getElementById('unit-pills');
         cont.innerHTML = '';
@@ -89,37 +95,69 @@
             p.className = `pill ${activeUnits.includes(name) ? 'active' : ''}`;
             p.innerText = name;
             p.onclick = async () => {
-                if (activeUnits.includes(name)) activeUnits = activeUnits.filter(u => u !== name);
-                else { activeUnits.push(name); await loadUnitData(name); }
-                renderPills(list); refreshPool();
+                if (activeUnits.includes(name)) {
+                    activeUnits = activeUnits.filter(u => u !== name);
+                } else {
+                    activeUnits.push(name);
+                    await loadUnitData(name);
+                }
+                renderPills(list);
+                refreshPool();
             };
             cont.appendChild(p);
         });
     }
+
     function refreshPool() {
-        pool = []; activeUnits.forEach(u => pool = [...pool, ...(vocabData[u] || [])]);
-        pool.sort(() => Math.random() - 0.5); idx = 0; updateUI();
+        pool = [];
+        activeUnits.forEach(u => {
+            if (vocabData[u]) pool = [...pool, ...vocabData[u]];
+        });
+        pool.sort(() => Math.random() - 0.5);
+        idx = 0;
+        updateUI();
+        if (pool.length > 0 && document.getElementById('view-practice').classList.contains('hidden') === false) {
+            nextTask();
+        }
     }
+
     function switchTab(t) {
         document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
         const btn = document.querySelector(`button[onclick*='${t}']`);
         if(btn) btn.classList.add('active');
         ['view-cards', 'view-practice'].forEach(v => document.getElementById(v).classList.add('hidden'));
         document.getElementById(`view-${t}`).classList.remove('hidden');
+        if (t === 'practice' && pool.length > 0) nextTask();
     }
-    function nextCard() { if(pool.length>0) { idx = (idx + 1) % pool.length; updateUI(); document.getElementById('card-inner').classList.remove('flipped'); } }
+
+    function nextCard() {
+        if(pool.length > 0) {
+            idx = (idx + 1) % pool.length;
+            updateUI();
+            document.getElementById('card-inner').classList.remove('flipped');
+        }
+    }
+
     function nextTask() {
-        hasChecked = false; const item = pool[idx]; currentTask = {q: item.en, a: item.hu};
+        if (pool.length === 0) return;
+        hasChecked = false;
+        const item = pool[idx];
+        currentTask = { q: item.en, a: item.hu };
         document.getElementById('p-prompt').innerText = currentTask.q;
-        document.getElementById('p-input').value = ''; document.getElementById('p-input').className = '';
-        document.getElementById('p-input').disabled = false; document.getElementById('p-feedback').innerHTML = '';
-        document.getElementById('check-btn').classList.remove('hidden'); document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('p-input').value = '';
+        document.getElementById('p-input').className = '';
+        document.getElementById('p-input').disabled = false;
+        document.getElementById('p-feedback').innerHTML = '';
+        document.getElementById('check-btn').classList.remove('hidden');
+        document.getElementById('next-btn').classList.add('hidden');
         document.getElementById('p-input').focus();
     }
+
     function check() {
         const user = document.getElementById('p-input').value.trim().toLowerCase();
         const correct = currentTask.a.toLowerCase();
-        hasChecked = true; document.getElementById('p-input').disabled = true;
+        hasChecked = true;
+        document.getElementById('p-input').disabled = true;
         if (user === correct) {
             document.getElementById('p-feedback').innerHTML = "<span style='color:var(--success)'>Zseniális! 🎉</span>";
             document.getElementById('p-input').className = 'correct';
@@ -127,9 +165,11 @@
             document.getElementById('p-feedback').innerHTML = `<span style='color:var(--error)'>Helyesen: <b>${currentTask.a}</b></span>`;
             document.getElementById('p-input').className = 'wrong';
         }
-        document.getElementById('check-btn').classList.add('hidden'); document.getElementById('next-btn').classList.remove('hidden');
+        document.getElementById('check-btn').classList.add('hidden');
+        document.getElementById('next-btn').classList.remove('hidden');
         idx = (idx + 1) % pool.length;
     }
+
     function updateUI() {
         if(pool.length > 0) {
             document.getElementById('card-front').innerText = pool[idx].en;
@@ -137,8 +177,13 @@
             document.getElementById('p-bar').style.width = ((idx/pool.length)*100) + '%';
         }
     }
-    document.getElementById('p-input').addEventListener('keypress', e => { if(e.key === 'Enter') hasChecked ? nextTask() : check(); });
-    fetchUnits(); lucide.createIcons();
+
+    document.getElementById('p-input').addEventListener('keypress', e => {
+        if(e.key === 'Enter') hasChecked ? nextTask() : check();
+    });
+
+    fetchUnits();
+    lucide.createIcons();
 </script>
 </body>
 </html>
