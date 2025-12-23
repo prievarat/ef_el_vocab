@@ -1,0 +1,20 @@
+[
+  {"en": "musical instruments", "hu": "hangszerek"},
+  {"en": "play the accordion", "hu": "harmonikázik"},
+  {"en": "play the violin", "hu": "hegedül"},
+  {"en": "play the keyboard", "hu": "szintetizátoron játszik"},
+  {"en": "play the saxophone", "hu": "szaxofonozik"},
+  {"en": "play the trumpet", "hu": "trombitál"},
+  {"en": "like classical music", "hu": "szereti a komolyzenét"},
+  {"en": "go to concerts or gigs", "hu": "koncertekre jár"},
+  {"en": "watch music videos online", "hu": "zenei videókat néz online"},
+  {"en": "download music", "hu": "zenét tölt le"},
+  {"en": "look for song lyrics", "hu": "dalszövegeket keres"},
+  {"en": "listen to music on my phone", "hu": "zenét hallgat a telefonján"},
+  {"en": "busker / performs in public", "hu": "utcazenész / nyilvánosan zenél"},
+  {"en": "give them money", "hu": "pénzt ad nekik"},
+  {"en": "play pop or folk songs", "hu": "pop vagy népdalokat játszik"},
+  {"en": "it's fantastic / great", "hu": "fantasztikus / nagyszerű"},
+  {"en": "it's awful / terrible", "hu": "borzalmas / szörnyű"},
+  {"en": "male / female musicians", "hu": "férfi / női zenészek"}
+]
