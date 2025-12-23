@@ -17,41 +17,40 @@
         body { font-family: 'Nunito', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
         .container { width: 100%; max-width: 600px; }
+        header { text-align: center; margin-bottom: 15px; }
+        h1 { font-weight: 800; font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 5px; }
 
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { font-weight: 800; font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 10px; }
-
-        /* Kisebb és kevésbé hangsúlyos fejezet gombok */
-        .pill-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 25px; }
+        .pill-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px; }
         .pill { padding: 4px 12px; border-radius: 8px; border: 1px solid #E5E7EB; cursor: pointer; font-weight: 600; font-size: 0.8rem; background: white; transition: 0.2s; color: var(--text-light); }
         .pill.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        /* Irányválasztó stílusa */
+        .direction-selector { display: flex; justify-content: center; gap: 5px; margin-bottom: 15px; }
+        .dir-btn { padding: 5px 15px; border-radius: 20px; border: 1px solid #ddd; background: #eee; font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--text-light); }
+        .dir-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); }
 
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; width: 100%; background: #F3F4F6; padding: 4px; border-radius: 12px; }
         .tab { flex: 1; padding: 10px; border: none; border-radius: 9px; background: transparent; cursor: pointer; font-weight: 700; font-family: inherit; color: var(--text-light); transition: 0.2s; }
         .tab.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        .card { background: var(--surface); border-radius: var(--radius); padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; min-height: 350px; position: relative; }
+        .card { background: var(--surface); border-radius: var(--radius); padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; min-height: 350px; position: relative; display: flex; flex-direction: column; }
         
-        /* Folyamatjelző és számláló */
         .progress-bar { width: 100%; height: 6px; background: #E5E7EB; border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: 0.3s; }
         .counter { font-size: 0.85rem; font-weight: 700; color: var(--text-light); text-align: right; margin-bottom: 15px; }
 
-        /* Flashcard Design */
-        .flashcard-container { perspective: 1000px; height: 180px; width: 100%; cursor: pointer; margin-bottom: 20px; }
+        .flashcard-container { perspective: 1000px; height: 180px; width: 100%; cursor: pointer; margin-bottom: 20px; flex-grow: 1; }
         .flashcard { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .flashcard.flipped { transform: rotateY(180deg); }
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); border: 2px solid var(--primary); background: white; padding: 20px; text-align: center; font-size: 1.5rem; font-weight: 700; }
-        .face.back { background: #fff; transform: rotateY(180deg); color: var(--text); }
+        .face.back { background: #fff; transform: rotateY(180deg); color: var(--text); border-color: var(--secondary); }
 
-        .btn-gen { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; margin-top: auto; }
+        .btn-gen { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 15px; }
         
         input[type="text"] { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #eee; text-align: center; font-size: 1.1rem; font-family: inherit; }
         
-        /* Teacher View */
         .teacher-form { display: flex; flex-direction: column; gap: 15px; }
         .form-group { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
-        input[type="number"], select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; }
 
         .hidden { display: none; }
 
@@ -71,6 +70,11 @@
 
     <div class="pill-container" id="unit-pills"></div>
 
+    <div class="direction-selector">
+        <button class="dir-btn active" id="dir-en-hu" onclick="setDirection('en-hu')">EN ➔ HU</button>
+        <button class="dir-btn" id="dir-hu-en" onclick="setDirection('hu-en')">HU ➔ EN</button>
+    </div>
+
     <div class="tabs">
         <button class="tab active" onclick="switchTab('cards')">Kártyák</button>
         <button class="tab" onclick="switchTab('practice')">Gyakorlás</button>
@@ -83,8 +87,8 @@
             <div class="counter" id="c-counter">0 / 0</div>
             <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
                 <div class="flashcard">
-                    <div class="face front" id="card-en">Válassz fejezetet!</div>
-                    <div class="face back" id="card-hu">...</div>
+                    <div class="face front" id="card-front">Válassz fejezetet!</div>
+                    <div class="face back" id="card-back">...</div>
                 </div>
             </div>
             <button class="btn-gen" onclick="nextWord()">Következő szó</button>
@@ -109,7 +113,7 @@
             <div class="teacher-form">
                 <div class="form-group"><label>Szavak száma:</label><input type="number" id="t-num" value="10"></div>
                 <div class="form-group">
-                    <label>Nyelv:</label>
+                    <label>Megadott nyelv:</label>
                     <select id="t-lang"><option value="en">Angol</option><option value="hu">Magyar</option></select>
                 </div>
                 <button class="btn-gen" onclick="generateTest()">Generálás</button>
@@ -122,6 +126,7 @@
 
 <script>
     let vocabData = {}; let activeUnits = []; let pool = []; let idx = 0;
+    let mode = 'en-hu'; // Alapértelmezett irány
 
     async function fetchUnits() {
         try {
@@ -155,6 +160,14 @@
         });
     }
 
+    function setDirection(newMode) {
+        mode = newMode;
+        document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`dir-${newMode}`).classList.add('active');
+        updateUI();
+        if (!document.getElementById('view-practice').classList.contains('hidden')) resetPractice();
+    }
+
     function refreshPool() {
         pool = []; activeUnits.forEach(u => pool = [...pool, ...vocabData[u]]);
         pool.sort(() => Math.random() - 0.5); idx = 0; updateUI();
@@ -170,10 +183,11 @@
 
     function updateUI() {
         if (pool.length > 0) {
-            document.getElementById('card-en').innerText = pool[idx].en;
-            document.getElementById('card-hu').innerText = pool[idx].hu;
+            const word = pool[idx];
+            // Kártyák frissítése az irány alapján
+            document.getElementById('card-front').innerText = (mode === 'en-hu') ? word.en : word.hu;
+            document.getElementById('card-back').innerText = (mode === 'en-hu') ? word.hu : word.en;
             
-            // Számlálók és Progress frissítése
             const current = idx + 1;
             const total = pool.length;
             const percent = (current / total) * 100;
@@ -194,7 +208,8 @@
 
     function resetPractice() {
         if (pool.length === 0) return;
-        document.getElementById('p-q').innerText = pool[idx].en;
+        const word = pool[idx];
+        document.getElementById('p-q').innerText = (mode === 'en-hu') ? word.en : word.hu;
         document.getElementById('p-input').value = '';
         document.getElementById('p-input').disabled = false;
         document.getElementById('p-feedback').innerText = '';
@@ -205,13 +220,16 @@
     function checkPractice() {
         const btn = document.getElementById('p-btn');
         if (btn.innerText === "Következő") { nextWord(); resetPractice(); return; }
+        
         const user = document.getElementById('p-input').value.trim().toLowerCase();
-        const correct = pool[idx].hu.toLowerCase();
+        const correct = (mode === 'en-hu') ? pool[idx].hu.toLowerCase() : pool[idx].en.toLowerCase();
+        const displayCorrect = (mode === 'en-hu') ? pool[idx].hu : pool[idx].en;
+
         if (user === correct) {
             document.getElementById('p-feedback').innerText = "Helyes! 🎉";
             document.getElementById('p-feedback').style.color = "var(--secondary)";
         } else {
-            document.getElementById('p-feedback').innerText = `Helyesen: ${pool[idx].hu}`;
+            document.getElementById('p-feedback').innerText = `Helyesen: ${displayCorrect}`;
             document.getElementById('p-feedback').style.color = "var(--error)";
         }
         btn.innerText = "Következő";
