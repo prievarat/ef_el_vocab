@@ -3,89 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinity Vocab Cloud</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <title>Infinity Vocab - Pro Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary-500: #F4A329; --primary-700: #B45309;
-            --secondary-500: #2BB6B4; --bg: #FFF7F2; --surface: #FFFFFF; --border: #E6E9EF;
-            --text: #1F2937; --text-muted: #6B7280;
-            --success: #2F9E44; --error: #D92D20; --radius: 16px;
+            --primary: #F4A329; --primary-dark: #D97706;
+            --secondary: #2BB6B4; --bg: #FDFCFB; --surface: #FFFFFF;
+            --text: #1F2937; --text-light: #6B7280;
+            --success: #10B981; --error: #EF4444; --radius: 20px;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Nunito', sans-serif; background-color: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 600px; }
-        .progress-container { width: 100%; height: 10px; background: #E2E8F0; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--secondary-500); width: 0%; transition: width 0.4s ease; }
-        .card { background: var(--surface); border-radius: var(--radius); padding: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); margin-bottom: 20px; border: 1px solid var(--border); position: relative; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #eee; padding: 4px; border-radius: 14px; }
-        .tab { flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; background: transparent; transition: 0.2s; font-family: inherit; }
-        .tab.active { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: var(--primary-700); }
-        .pill-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
-        .pill { padding: 6px 14px; border-radius: 9999px; border: 2px solid var(--border); cursor: pointer; font-size: 13px; font-weight: 600; background: white; }
-        .pill.active { border-color: var(--primary-500); background: var(--primary-500); color: white; }
-        .flashcard-container { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 20px; }
+        body { font-family: 'Nunito', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .container { width: 100%; max-width: 500px; }
+
+        /* Header & Pills */
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { font-weight: 800; font-size: 2rem; color: var(--primary-dark); margin-bottom: 15px; }
+        .pill-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .pill { padding: 8px 16px; border-radius: 12px; border: 2px solid #E5E7EB; cursor: pointer; font-weight: 700; font-size: 0.9rem; background: white; transition: 0.2s; }
+        .pill.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 12px rgba(244, 163, 41, 0.3); }
+
+        /* Tabs */
+        .tabs { display: flex; background: #F3F4F6; padding: 5px; border-radius: 15px; margin-bottom: 25px; }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 12px; background: transparent; cursor: pointer; font-weight: 700; font-family: inherit; transition: 0.3s; color: var(--text-light); }
+        .tab.active { background: white; color: var(--primary-dark); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+
+        /* Cards */
+        .card { background: var(--surface); border-radius: var(--radius); padding: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        
+        /* Flashcards */
+        .flashcard-container { perspective: 1000px; height: 200px; width: 100%; cursor: pointer; }
         .flashcard { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .flashcard.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius); padding: 20px; border: 2px solid var(--primary-500); background: white; text-align: center; }
-        .card-back { background: var(--secondary-500); color: white; transform: rotateY(180deg); border: none; }
-        .word-txt { font-size: 26px; font-weight: 700; }
-        .btn-main { background: var(--primary-500); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; font-size: 16px; }
-        input[type="text"] { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); font-size: 18px; font-family: inherit; outline: none; margin-top: 15px; }
-        input.correct { border-color: var(--success); background: #f0fff4; }
-        input.wrong { border-color: var(--error); background: #fef2f2; }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); border: 3px solid var(--primary); background: white; padding: 20px; text-align: center; font-size: 1.6rem; font-weight: 700; }
+        .face.back { background: var(--secondary); color: white; transform: rotateY(180deg); border: none; }
+
+        /* Inputs & Buttons */
+        input[type="text"] { width: 100%; padding: 18px; border-radius: 15px; border: 2px solid #E5E7EB; font-size: 1.1rem; font-family: inherit; margin-bottom: 15px; text-align: center; outline: none; transition: 0.2s; }
+        input[type="text"]:focus { border-color: var(--primary); }
+        input.correct { border-color: var(--success); background: #ECFDF5; }
+        input.wrong { border-color: var(--error); background: #FEF2F2; }
+
+        .btn { padding: 16px; border-radius: 15px; border: none; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; font-family: inherit; width: 100%; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .stat-box { background: #F9FAFB; padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-val { display: block; font-size: 1.2rem; font-weight: 800; color: var(--primary-dark); }
+
         .hidden { display: none; }
+        .progress-bar { width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: 0.3s; }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <header><h1 style="text-align: center; margin-bottom:10px; color:var(--primary-700);">Infinity Vocab Cloud</h1><div class="pill-container" id="unit-pills"></div></header>
-    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+    <header>
+        <h1>Infinity Vocab</h1>
+        <div class="pill-container" id="unit-pills"></div>
+    </header>
+
     <div class="tabs">
         <button class="tab active" onclick="switchTab('cards')">Kártyák</button>
         <button class="tab" onclick="switchTab('practice')">Gyakorlás</button>
+        <button class="tab" onclick="switchTab('test')">Szódolgozat</button>
     </div>
-    <div id="view-cards" class="card">
-        <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
-            <div class="flashcard" id="card-inner">
-                <div class="card-face"><div class="word-txt" id="card-front">Válassz fejezetet!</div></div>
-                <div class="card-face card-back"><div class="word-txt" id="card-back">...</div></div>
+
+    <div id="view-cards" class="view">
+        <div class="card">
+            <div class="flashcard-container" onclick="document.getElementById('flash-inner').classList.toggle('flipped')">
+                <div class="flashcard" id="flash-inner">
+                    <div class="face front" id="card-en">Válassz fejezetet!</div>
+                    <div class="face back" id="card-hu">...</div>
+                </div>
             </div>
-        </div>
-        <button class="btn-main" onclick="nextCard()">Következő szó</button>
-    </div>
-    <div id="view-practice" class="card hidden">
-        <div id="p-engine">
-            <h2 id="p-prompt" style="text-align: center; font-size: 24px;">Prompt</h2>
-            <input type="text" id="p-input" placeholder="Válasz..." autocomplete="off">
-            <div id="p-feedback" style="text-align:center; padding:15px; font-weight:700; min-height:80px;"></div>
-            <button class="btn-main" id="check-btn" onclick="check()">Ellenőrzés</button>
-            <button class="btn-main hidden" id="next-btn" onclick="nextTask()">Következő ➔</button>
+            <button class="btn btn-primary" style="margin-top:30px;" onclick="nextWord()">Következő szó</button>
         </div>
     </div>
+
+    <div id="view-practice" class="view hidden">
+        <div class="card">
+            <h2 id="p-q" style="text-align:center; margin-bottom:20px; font-size:1.8rem;">?</h2>
+            <input type="text" id="p-input" placeholder="Írd be magyarul..." autocomplete="off">
+            <div id="p-feedback" style="text-align:center; min-height:40px; margin-bottom:10px; font-weight:700;"></div>
+            <button class="btn btn-primary" id="p-btn" onclick="checkPractice()">Ellenőrzés</button>
+        </div>
+    </div>
+
+    <div id="view-test" class="view hidden">
+        <div id="test-setup" class="card">
+            <h3 style="margin-bottom:15px; text-align:center;">Hány szóból írsz dolgozatot?</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:20px;">
+                <button class="btn" style="background:#E5E7EB" onclick="startTest(10)">10</button>
+                <button class="btn" style="background:#E5E7EB" onclick="startTest(20)">20</button>
+                <button class="btn" style="background:#E5E7EB" onclick="startTest(0)">Összes</button>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-light); text-align:center;">Válassz fejezetet a kezdéshez!</p>
+        </div>
+
+        <div id="test-engine" class="card hidden">
+            <div class="progress-bar"><div class="progress-fill" id="t-progress"></div></div>
+            <h4 id="t-count" style="color:var(--text-light); font-size:0.9rem; margin-bottom:10px;">1/10</h4>
+            <h2 id="t-q" style="text-align:center; margin-bottom:20px; font-size:1.8rem;">?</h2>
+            <input type="text" id="t-input" placeholder="Válasz..." autocomplete="off">
+            <button class="btn btn-primary" id="t-btn" onclick="checkTest()">Következő</button>
+        </div>
+
+        <div id="test-results" class="card hidden">
+            <h2 style="text-align:center; margin-bottom:20px;">Eredmény</h2>
+            <div class="stats-grid">
+                <div class="stat-box">Jó<span class="stat-val" id="res-ok">0</span></div>
+                <div class="stat-box">Rossz<span class="stat-val" id="res-bad" style="color:var(--error)">0</span></div>
+            </div>
+            <h1 id="res-percent" style="text-align:center; margin:20px 0; font-size:3rem;">0%</h1>
+            <button class="btn btn-primary" onclick="switchTab('test')">Újrakezdés</button>
+        </div>
+    </div>
+
 </div>
+
 <script>
-    let vocabData = {}; let activeUnits = []; let pool = []; let idx = 0; let currentTask = null; let hasChecked = false;
+    let vocabData = {}; let activeUnits = []; let pool = []; let idx = 0;
+    let testPool = []; let testIdx = 0; let score = 0;
 
     async function fetchUnits() {
         try {
-            const response = await fetch('data/units.json');
-            const list = await response.json();
+            const res = await fetch('data/units.json');
+            const list = await res.json();
             renderPills(list);
-        } catch (e) { console.error("Units betöltési hiba:", e); }
+        } catch (e) { console.error("Hiba a betöltésnél."); }
     }
 
-    async function loadUnitData(name) {
+    async function loadUnit(name) {
         if (!vocabData[name]) {
-            try {
-                // JAVÍTÁS: Itt visszafelé dőlő idézőjelet (backtick) használunk!
-                const response = await fetch(`data/${name}.json`);
-                vocabData[name] = await response.json();
-                console.log(`${name}.json sikeresen betöltve.`);
-            } catch (e) { 
-                console.error(`Hiba a ${name}.json betöltésekor:`, e); 
-            }
+            const res = await fetch(`data/${name}.json`);
+            vocabData[name] = await res.json();
         }
         refreshPool();
     }
@@ -98,95 +156,121 @@
             p.className = `pill ${activeUnits.includes(name) ? 'active' : ''}`;
             p.innerText = name;
             p.onclick = async () => {
-                if (activeUnits.includes(name)) {
-                    activeUnits = activeUnits.filter(u => u !== name);
-                    refreshPool();
-                } else {
-                    activeUnits.push(name);
-                    await loadUnitData(name);
-                }
-                renderPills(list);
+                if (activeUnits.includes(name)) activeUnits = activeUnits.filter(u => u !== name);
+                else { activeUnits.push(name); await loadUnit(name); }
+                renderPills(list); refreshPool();
             };
             cont.appendChild(p);
         });
     }
 
     function refreshPool() {
-        pool = [];
-        activeUnits.forEach(u => {
-            if (vocabData[u]) pool = [...pool, ...vocabData[u]];
-        });
-        pool.sort(() => Math.random() - 0.5);
-        idx = 0;
-        updateUI();
-        if (pool.length > 0 && !document.getElementById('view-practice').classList.contains('hidden')) {
-            nextTask();
-        }
+        pool = []; activeUnits.forEach(u => pool = [...pool, ...vocabData[u]]);
+        pool.sort(() => Math.random() - 0.5); idx = 0; updateUI();
     }
 
     function switchTab(t) {
-        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-        const btn = document.querySelector(`button[onclick*='${t}']`);
-        if(btn) btn.classList.add('active');
-        ['view-cards', 'view-practice'].forEach(v => document.getElementById(v).classList.add('hidden'));
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelector(`[onclick*='${t}']`).classList.add('active');
+        document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
         document.getElementById(`view-${t}`).classList.remove('hidden');
-        if (t === 'practice' && pool.length > 0) nextTask();
-    }
-
-    function nextCard() {
-        if(pool.length > 0) {
-            idx = (idx + 1) % pool.length;
-            updateUI();
-            document.getElementById('card-inner').classList.remove('flipped');
+        if (t === 'practice') resetPractice();
+        if (t === 'test') { 
+            document.getElementById('test-setup').classList.remove('hidden');
+            document.getElementById('test-engine').classList.add('hidden');
+            document.getElementById('test-results').classList.add('hidden');
         }
-    }
-
-    function nextTask() {
-        if (pool.length === 0) return;
-        hasChecked = false;
-        const item = pool[idx];
-        currentTask = { q: item.en, a: item.hu };
-        document.getElementById('p-prompt').innerText = currentTask.q;
-        document.getElementById('p-input').value = '';
-        document.getElementById('p-input').className = '';
-        document.getElementById('p-input').disabled = false;
-        document.getElementById('p-feedback').innerHTML = '';
-        document.getElementById('check-btn').classList.remove('hidden');
-        document.getElementById('next-btn').classList.add('hidden');
-        document.getElementById('p-input').focus();
-    }
-
-    function check() {
-        const user = document.getElementById('p-input').value.trim().toLowerCase();
-        const correct = currentTask.a.toLowerCase();
-        hasChecked = true;
-        document.getElementById('p-input').disabled = true;
-        if (user === correct) {
-            document.getElementById('p-feedback').innerHTML = "<span style='color:var(--success)'>Zseniális! 🎉</span>";
-            document.getElementById('p-input').className = 'correct';
-        } else {
-            document.getElementById('p-feedback').innerHTML = `<span style='color:var(--error)'>Helyesen: <b>${currentTask.a}</b></span>`;
-            document.getElementById('p-input').className = 'wrong';
-        }
-        document.getElementById('check-btn').classList.add('hidden');
-        document.getElementById('next-btn').classList.remove('hidden');
-        idx = (idx + 1) % pool.length;
     }
 
     function updateUI() {
-        if(pool.length > 0) {
-            document.getElementById('card-front').innerText = pool[idx].en;
-            document.getElementById('card-back').innerText = pool[idx].hu;
-            document.getElementById('p-bar').style.width = ((idx/pool.length)*100) + '%';
-        } else {
-            document.getElementById('card-front').innerText = "Válassz fejezetet!";
-            document.getElementById('card-back').innerText = "...";
-            document.getElementById('p-bar').style.width = '0%';
+        if (pool.length > 0) {
+            document.getElementById('card-en').innerText = pool[idx].en;
+            document.getElementById('card-hu').innerText = pool[idx].hu;
         }
     }
 
-    document.getElementById('p-input').addEventListener('keypress', e => {
-        if(e.key === 'Enter') hasChecked ? nextTask() : check();
+    function nextWord() {
+        if (pool.length === 0) return;
+        idx = (idx + 1) % pool.length;
+        document.getElementById('flash-inner').classList.remove('flipped');
+        setTimeout(updateUI, 200);
+    }
+
+    // Practice Logic
+    function resetPractice() {
+        if (pool.length === 0) return;
+        const item = pool[idx];
+        document.getElementById('p-q').innerText = item.en;
+        const inp = document.getElementById('p-input');
+        inp.value = ''; inp.className = ''; inp.disabled = false;
+        document.getElementById('p-feedback').innerText = '';
+        document.getElementById('p-btn').innerText = "Ellenőrzés";
+    }
+
+    function checkPractice() {
+        const btn = document.getElementById('p-btn');
+        const inp = document.getElementById('p-input');
+        if (btn.innerText === "Következő") { idx = (idx+1)%pool.length; resetPractice(); return; }
+
+        const user = inp.value.trim().toLowerCase();
+        const correct = pool[idx].hu.toLowerCase();
+        if (user === correct) {
+            inp.className = 'correct';
+            document.getElementById('p-feedback').innerText = "Helyes! 🎉";
+            document.getElementById('p-feedback').style.color = "var(--success)";
+        } else {
+            inp.className = 'wrong';
+            document.getElementById('p-feedback').innerText = `Rossz. Helyesen: ${pool[idx].hu}`;
+            document.getElementById('p-feedback').style.color = "var(--error)";
+        }
+        btn.innerText = "Következő"; inp.disabled = true;
+    }
+
+    // Test Logic
+    function startTest(count) {
+        if (pool.length === 0) return alert("Válassz fejezetet!");
+        testPool = [...pool].sort(() => Math.random() - 0.5);
+        if (count > 0) testPool = testPool.slice(0, count);
+        testIdx = 0; score = 0;
+        document.getElementById('test-setup').classList.add('hidden');
+        document.getElementById('test-engine').classList.remove('hidden');
+        updateTestUI();
+    }
+
+    function updateTestUI() {
+        const item = testPool[testIdx];
+        document.getElementById('t-q').innerText = item.en;
+        document.getElementById('t-count').innerText = `${testIdx + 1} / ${testPool.length}`;
+        document.getElementById('t-progress').style.width = `${(testIdx / testPool.length) * 100}%`;
+        const inp = document.getElementById('t-input');
+        inp.value = ''; inp.focus();
+    }
+
+    function checkTest() {
+        const user = document.getElementById('t-input').value.trim().toLowerCase();
+        const correct = testPool[testIdx].hu.toLowerCase();
+        if (user === correct) score++;
+        
+        testIdx++;
+        if (testIdx < testPool.length) updateTestUI();
+        else showResults();
+    }
+
+    function showResults() {
+        document.getElementById('test-engine').classList.add('hidden');
+        document.getElementById('test-results').classList.remove('hidden');
+        document.getElementById('res-ok').innerText = score;
+        document.getElementById('res-bad').innerText = testPool.length - score;
+        document.getElementById('res-percent').innerText = Math.round((score / testPool.length) * 100) + "%";
+    }
+
+    // Keyboard support
+    document.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+            if (!document.getElementById('view-practice').classList.contains('hidden')) checkPractice();
+            if (!document.getElementById('view-test').classList.contains('hidden') && 
+                !document.getElementById('test-engine').classList.contains('hidden')) checkTest();
+        }
     });
 
     fetchUnits();
