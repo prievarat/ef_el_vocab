@@ -3,134 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinity Vocab - Pro Edition</title>
+    <title>English File Infinity</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #F4A329; --primary-dark: #D97706;
             --secondary: #2BB6B4; --bg: #FDFCFB; --surface: #FFFFFF;
-            --text: #1F2937; --text-light: #6B7280;
-            --success: #10B981; --error: #EF4444; --radius: 20px;
+            --text: #1F2937; --text-light: #6B7280; --radius: 20px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Nunito', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        .container { width: 100%; max-width: 500px; }
+        .container { width: 100%; max-width: 600px; }
 
-        /* Header & Pills */
         header { text-align: center; margin-bottom: 30px; }
-        h1 { font-weight: 800; font-size: 2rem; color: var(--primary-dark); margin-bottom: 15px; }
-        .pill-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .pill { padding: 8px 16px; border-radius: 12px; border: 2px solid #E5E7EB; cursor: pointer; font-weight: 700; font-size: 0.9rem; background: white; transition: 0.2s; }
-        .pill.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 12px rgba(244, 163, 41, 0.3); }
+        h1 { font-weight: 800; font-size: 2.2rem; color: var(--primary-dark); margin-bottom: 15px; }
 
-        /* Tabs */
-        .tabs { display: flex; background: #F3F4F6; padding: 5px; border-radius: 15px; margin-bottom: 25px; }
-        .tab { flex: 1; padding: 12px; border: none; border-radius: 12px; background: transparent; cursor: pointer; font-weight: 700; font-family: inherit; transition: 0.3s; color: var(--text-light); }
-        .tab.active { background: white; color: var(--primary-dark); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .pill-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; }
+        .pill { padding: 10px 20px; border-radius: 999px; border: 2px solid #E5E7EB; cursor: pointer; font-weight: 700; background: white; transition: 0.2s; color: var(--primary-dark); }
+        .pill.active { background: var(--primary); border-color: var(--primary); color: white; }
 
-        /* Cards */
-        .card { background: var(--surface); border-radius: var(--radius); padding: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; width: 100%; }
+        .tab { flex: 1; padding: 14px; border: none; border-radius: 12px; background: #F3F4F6; cursor: pointer; font-weight: 700; font-family: inherit; color: var(--text-light); transition: 0.2s; }
+        .tab.active { background: white; color: var(--primary-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        .card { background: var(--surface); border-radius: var(--radius); padding: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; min-height: 300px; }
         
-        /* Flashcards */
-        .flashcard-container { perspective: 1000px; height: 200px; width: 100%; cursor: pointer; }
+        /* Flashcard Design */
+        .flashcard-container { perspective: 1000px; height: 220px; width: 100%; cursor: pointer; margin-bottom: 20px; }
         .flashcard { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .flashcard.flipped { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); border: 3px solid var(--primary); background: white; padding: 20px; text-align: center; font-size: 1.6rem; font-weight: 700; }
-        .face.back { background: var(--secondary); color: white; transform: rotateY(180deg); border: none; }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); border: 2px solid var(--primary); background: white; padding: 25px; text-align: center; font-size: 1.8rem; font-weight: 700; }
+        .face.back { background: #fff; transform: rotateY(180deg); color: var(--text); }
 
-        /* Inputs & Buttons */
-        input[type="text"] { width: 100%; padding: 18px; border-radius: 15px; border: 2px solid #E5E7EB; font-size: 1.1rem; font-family: inherit; margin-bottom: 15px; text-align: center; outline: none; transition: 0.2s; }
-        input[type="text"]:focus { border-color: var(--primary); }
-        input.correct { border-color: var(--success); background: #ECFDF5; }
-        input.wrong { border-color: var(--error); background: #FEF2F2; }
+        /* Teacher View Styles */
+        .teacher-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group { display: flex; align-items: center; gap: 15px; }
+        label { font-weight: 600; color: var(--text); }
+        input, select { padding: 10px; border-radius: 10px; border: 1px solid #D1D5DB; font-family: inherit; font-size: 1rem; }
+        input[type="number"] { width: 80px; }
 
-        .btn { padding: 16px; border-radius: 15px; border: none; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; font-family: inherit; width: 100%; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        
-        /* Stats */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .stat-box { background: #F9FAFB; padding: 15px; border-radius: 12px; text-align: center; }
-        .stat-val { display: block; font-size: 1.2rem; font-weight: 800; color: var(--primary-dark); }
+        .btn-gen { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; width: 100%; }
+        .btn-gen:hover { background: var(--primary-dark); }
 
         .hidden { display: none; }
-        .progress-bar { width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: 0.3s; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 40px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #000; padding: 12px; text-align: left; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>Infinity Vocab</h1>
-        <div class="pill-container" id="unit-pills"></div>
-    </header>
+    <header><h1>English File Infinity</h1></header>
+
+    <div class="pill-container" id="unit-pills"></div>
 
     <div class="tabs">
         <button class="tab active" onclick="switchTab('cards')">Kártyák</button>
         <button class="tab" onclick="switchTab('practice')">Gyakorlás</button>
-        <button class="tab" onclick="switchTab('test')">Szódolgozat</button>
+        <button class="tab" onclick="switchTab('teacher')">Tanárnak</button>
     </div>
 
     <div id="view-cards" class="view">
         <div class="card">
-            <div class="flashcard-container" onclick="document.getElementById('flash-inner').classList.toggle('flipped')">
-                <div class="flashcard" id="flash-inner">
+            <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+                <div class="flashcard">
                     <div class="face front" id="card-en">Válassz fejezetet!</div>
                     <div class="face back" id="card-hu">...</div>
                 </div>
             </div>
-            <button class="btn btn-primary" style="margin-top:30px;" onclick="nextWord()">Következő szó</button>
+            <button class="btn-gen" onclick="nextWord()">Következő szó</button>
         </div>
     </div>
 
     <div id="view-practice" class="view hidden">
         <div class="card">
-            <h2 id="p-q" style="text-align:center; margin-bottom:20px; font-size:1.8rem;">?</h2>
-            <input type="text" id="p-input" placeholder="Írd be magyarul..." autocomplete="off">
-            <div id="p-feedback" style="text-align:center; min-height:40px; margin-bottom:10px; font-weight:700;"></div>
-            <button class="btn btn-primary" id="p-btn" onclick="checkPractice()">Ellenőrzés</button>
+            <h2 id="p-q" style="text-align:center; margin-bottom:25px; font-size:2rem;">?</h2>
+            <input type="text" id="p-input" placeholder="Írd be a választ..." style="width:100%; padding:15px; margin-bottom:15px; border-radius:10px; border:2px solid #eee; text-align:center; font-size:1.2rem;">
+            <button class="btn-gen" onclick="checkPractice()">Ellenőrzés</button>
+            <p id="p-feedback" style="text-align:center; margin-top:20px; font-weight:700;"></p>
         </div>
     </div>
 
-    <div id="view-test" class="view hidden">
-        <div id="test-setup" class="card">
-            <h3 style="margin-bottom:15px; text-align:center;">Hány szóból írsz dolgozatot?</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:20px;">
-                <button class="btn" style="background:#E5E7EB" onclick="startTest(10)">10</button>
-                <button class="btn" style="background:#E5E7EB" onclick="startTest(20)">20</button>
-                <button class="btn" style="background:#E5E7EB" onclick="startTest(0)">Összes</button>
+    <div id="view-teacher" class="view hidden">
+        <div class="card">
+            <h2 style="margin-bottom:10px;">Dolgozat generáló</h2>
+            <p style="color:var(--text-light); margin-bottom:25px;">Készíts nyomtatható listát a kijelölt egységekből.</p>
+            
+            <div class="teacher-form">
+                <div class="form-group">
+                    <label>Szavak száma:</label>
+                    <input type="number" id="t-num" value="10" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Melyik nyelvet adjam meg?</label>
+                    <select id="t-lang">
+                        <option value="en">Angolt</option>
+                        <option value="hu">Magyart</option>
+                    </select>
+                </div>
+                <button class="btn-gen" onclick="generateTest()">Generálás</button>
             </div>
-            <p style="font-size:0.8rem; color:var(--text-light); text-align:center;">Válassz fejezetet a kezdéshez!</p>
-        </div>
-
-        <div id="test-engine" class="card hidden">
-            <div class="progress-bar"><div class="progress-fill" id="t-progress"></div></div>
-            <h4 id="t-count" style="color:var(--text-light); font-size:0.9rem; margin-bottom:10px;">1/10</h4>
-            <h2 id="t-q" style="text-align:center; margin-bottom:20px; font-size:1.8rem;">?</h2>
-            <input type="text" id="t-input" placeholder="Válasz..." autocomplete="off">
-            <button class="btn btn-primary" id="t-btn" onclick="checkTest()">Következő</button>
-        </div>
-
-        <div id="test-results" class="card hidden">
-            <h2 style="text-align:center; margin-bottom:20px;">Eredmény</h2>
-            <div class="stats-grid">
-                <div class="stat-box">Jó<span class="stat-val" id="res-ok">0</span></div>
-                <div class="stat-box">Rossz<span class="stat-val" id="res-bad" style="color:var(--error)">0</span></div>
-            </div>
-            <h1 id="res-percent" style="text-align:center; margin:20px 0; font-size:3rem;">0%</h1>
-            <button class="btn btn-primary" onclick="switchTab('test')">Újrakezdés</button>
         </div>
     </div>
-
 </div>
+
+<div id="print-area" class="hidden"></div>
 
 <script>
     let vocabData = {}; let activeUnits = []; let pool = []; let idx = 0;
-    let testPool = []; let testIdx = 0; let score = 0;
 
     async function fetchUnits() {
         try {
@@ -174,12 +163,6 @@
         document.querySelector(`[onclick*='${t}']`).classList.add('active');
         document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
         document.getElementById(`view-${t}`).classList.remove('hidden');
-        if (t === 'practice') resetPractice();
-        if (t === 'test') { 
-            document.getElementById('test-setup').classList.remove('hidden');
-            document.getElementById('test-engine').classList.add('hidden');
-            document.getElementById('test-results').classList.add('hidden');
-        }
     }
 
     function updateUI() {
@@ -192,89 +175,31 @@
     function nextWord() {
         if (pool.length === 0) return;
         idx = (idx + 1) % pool.length;
-        document.getElementById('flash-inner').classList.remove('flipped');
+        document.querySelector('.flashcard').classList.remove('flipped');
         setTimeout(updateUI, 200);
     }
 
-    // Practice Logic
-    function resetPractice() {
-        if (pool.length === 0) return;
-        const item = pool[idx];
-        document.getElementById('p-q').innerText = item.en;
-        const inp = document.getElementById('p-input');
-        inp.value = ''; inp.className = ''; inp.disabled = false;
-        document.getElementById('p-feedback').innerText = '';
-        document.getElementById('p-btn').innerText = "Ellenőrzés";
-    }
-
-    function checkPractice() {
-        const btn = document.getElementById('p-btn');
-        const inp = document.getElementById('p-input');
-        if (btn.innerText === "Következő") { idx = (idx+1)%pool.length; resetPractice(); return; }
-
-        const user = inp.value.trim().toLowerCase();
-        const correct = pool[idx].hu.toLowerCase();
-        if (user === correct) {
-            inp.className = 'correct';
-            document.getElementById('p-feedback').innerText = "Helyes! 🎉";
-            document.getElementById('p-feedback').style.color = "var(--success)";
-        } else {
-            inp.className = 'wrong';
-            document.getElementById('p-feedback').innerText = `Rossz. Helyesen: ${pool[idx].hu}`;
-            document.getElementById('p-feedback').style.color = "var(--error)";
-        }
-        btn.innerText = "Következő"; inp.disabled = true;
-    }
-
-    // Test Logic
-    function startTest(count) {
+    function generateTest() {
         if (pool.length === 0) return alert("Válassz fejezetet!");
-        testPool = [...pool].sort(() => Math.random() - 0.5);
-        if (count > 0) testPool = testPool.slice(0, count);
-        testIdx = 0; score = 0;
-        document.getElementById('test-setup').classList.add('hidden');
-        document.getElementById('test-engine').classList.remove('hidden');
-        updateTestUI();
-    }
-
-    function updateTestUI() {
-        const item = testPool[testIdx];
-        document.getElementById('t-q').innerText = item.en;
-        document.getElementById('t-count').innerText = `${testIdx + 1} / ${testPool.length}`;
-        document.getElementById('t-progress').style.width = `${(testIdx / testPool.length) * 100}%`;
-        const inp = document.getElementById('t-input');
-        inp.value = ''; inp.focus();
-    }
-
-    function checkTest() {
-        const user = document.getElementById('t-input').value.trim().toLowerCase();
-        const correct = testPool[testIdx].hu.toLowerCase();
-        if (user === correct) score++;
+        const num = parseInt(document.getElementById('t-num').value);
+        const lang = document.getElementById('t-lang').value;
         
-        testIdx++;
-        if (testIdx < testPool.length) updateTestUI();
-        else showResults();
+        let testWords = [...pool].sort(() => Math.random() - 0.5).slice(0, num);
+        
+        let html = `<h2>Szódolgozat - ${activeUnits.join(', ')}</h2>`;
+        html += `<table><tr><th>Megadott szó</th><th>Jelentése</th></tr>`;
+        
+        testWords.forEach(w => {
+            html += `<tr><td>${lang === 'en' ? w.en : w.hu}</td><td></td></tr>`;
+        });
+        html += `</table>`;
+        
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = html;
+        window.print();
     }
-
-    function showResults() {
-        document.getElementById('test-engine').classList.add('hidden');
-        document.getElementById('test-results').classList.remove('hidden');
-        document.getElementById('res-ok').innerText = score;
-        document.getElementById('res-bad').innerText = testPool.length - score;
-        document.getElementById('res-percent').innerText = Math.round((score / testPool.length) * 100) + "%";
-    }
-
-    // Keyboard support
-    document.addEventListener('keypress', e => {
-        if (e.key === 'Enter') {
-            if (!document.getElementById('view-practice').classList.contains('hidden')) checkPractice();
-            if (!document.getElementById('view-test').classList.contains('hidden') && 
-                !document.getElementById('test-engine').classList.contains('hidden')) checkTest();
-        }
-    });
 
     fetchUnits();
-    lucide.createIcons();
 </script>
 </body>
 </html>
