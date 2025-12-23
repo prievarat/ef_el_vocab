@@ -79,10 +79,13 @@
     async function loadUnitData(name) {
         if (!vocabData[name]) {
             try {
-                // ITT VOLT A HIBA: backtick-et kell használni!
+                // JAVÍTÁS: Itt visszafelé dőlő idézőjelet (backtick) használunk!
                 const response = await fetch(`data/${name}.json`);
                 vocabData[name] = await response.json();
-            } catch (e) { console.error(`Hiba a ${name}.json betöltésekor:`, e); }
+                console.log(`${name}.json sikeresen betöltve.`);
+            } catch (e) { 
+                console.error(`Hiba a ${name}.json betöltésekor:`, e); 
+            }
         }
         refreshPool();
     }
@@ -97,12 +100,12 @@
             p.onclick = async () => {
                 if (activeUnits.includes(name)) {
                     activeUnits = activeUnits.filter(u => u !== name);
+                    refreshPool();
                 } else {
                     activeUnits.push(name);
                     await loadUnitData(name);
                 }
                 renderPills(list);
-                refreshPool();
             };
             cont.appendChild(p);
         });
@@ -116,7 +119,7 @@
         pool.sort(() => Math.random() - 0.5);
         idx = 0;
         updateUI();
-        if (pool.length > 0 && document.getElementById('view-practice').classList.contains('hidden') === false) {
+        if (pool.length > 0 && !document.getElementById('view-practice').classList.contains('hidden')) {
             nextTask();
         }
     }
@@ -175,6 +178,10 @@
             document.getElementById('card-front').innerText = pool[idx].en;
             document.getElementById('card-back').innerText = pool[idx].hu;
             document.getElementById('p-bar').style.width = ((idx/pool.length)*100) + '%';
+        } else {
+            document.getElementById('card-front').innerText = "Válassz fejezetet!";
+            document.getElementById('card-back').innerText = "...";
+            document.getElementById('p-bar').style.width = '0%';
         }
     }
 
